@@ -1,1 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChainConnect - Ghostwriting</title>
+    <style>
+        body, html { 
+            margin: 0;
+            width: 100%;
+            height: 100%;
+            overflow-x: hidden;
+            background: black; 
+        }
 
+        #star-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        #three-canvas {
+            position: fixed;
+            top: 20%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 2;
+            pointer-events: auto;
+            cursor: grab;
+        }
+
+        #three-canvas:active {
+            cursor: grabbing;
+        }
+
+        .center-image {
+            position: fixed;
+            top: 55%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 3;
+            width: 35%; 
+        }
+    /* Mobile styles */
+        @media screen and (max-width: 768px) {
+            .center-image {
+                width: 65%; /* Double the size on mobile */
+            }
+        }
+        
+
+        .center-image img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .book-link {
+            position: fixed;
+            top: 85%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 3;
+            width: 42.5%;
+        }
+
+        .book-link img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        @keyframes pulse {
+            0% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.1); }
+            100% { transform: translate(-50%, -50%) scale(1); }
+        }
+
+        .book-link:hover {
+            animation: pulse 1.5s infinite;
+        }
+
+        .logo {
+            position: fixed;
+            width: 85px;
+            height: 85px;
+            transition: transform 0.3s ease;
+            cursor: pointer;
+            z-index: 3;
+        }
+
+        .logo:hover {
+            transform: scale(1.1);
+            animation: logo-pulse 1.5s infinite;
+        }
+
+        @keyframes logo-pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        #chain-connect-logo { top: 1rem; right: 1rem; }
+        #infinity-logo { bottom: 1rem; left: 1rem; }
+
+        #form-container {
+            position: fixed;
+            left: -50%;
+            top: 0;
+            width: 50%;
+            height: 80vh;
+            background: rgba(0, 0, 0, 0.95);
+            padding: 2rem;
+            z-index: 4;
+            transition: transform 0.3s ease-in-out;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #form-container.active {
+            transform: translateX(100%);
+        }
+
+        #form-container::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            width: 100%;
+            height: 2px;
+            background: rgba(173, 216, 230, 0.5);
+        }
+
+        #form-container::before {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 2px;
+            height: 100%;
+            background: rgba(173, 216, 230, 0.5);
+        }
+
+        .contact-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            color: #ADE8F4;
+        }
+
+        .contact-form label {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .contact-form input,
+        .contact-form textarea {
+            background: rgba(173, 216, 230, 0.1);
+            border: 1px solid rgba(173, 216, 230, 0.3);
+            color: white;
+            padding: 0.75rem;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        .contact-form textarea {
+            height: 200px;
+            resize: vertical;
+        }
+
+        .contact-form button {
+            background: rgba(173, 216, 230, 0.2);
+            color: #ADE8F4;
+            border: 1px solid rgba(173, 216, 230, 0.5);
+            padding: 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        .contact-form button:hover {
+            background: rgba(173, 216, 230, 0.3);
+            transform: scale(1.02);
+        }
+    </style>
+</head>
+<body>
+    <canvas id="star-background"></canvas>
+    <canvas id="three-canvas"></canvas>
+
+    <div class="center-image">
+        <img src="ghostwritingwebsite.png" alt="Ghostwriting Services">
+    </div>
+
+    <a href="https://www.amazon.com/Karma-This-has-joke-book-ebook/dp/B0D2DHVVWR/ref=sr_1_1?crid=1M6A0ZJ8V0Q9R&dib=eyJ2IjoiMSJ9.ZQ8Rc4EoBx6HyZRV1P-Xaw.HwU2TZ51ylnDDR_Fc-pg9rYsDT2xv0IsIaJcASc9tYk&dib_tag=se&keywords=karma+this+has+got+to+be+a+joke+book&qid=1733093508&sprefix=karma+thi%2Caps%2C4253&sr=8-1" target="_blank" class="book-link">
+        <img src="mykarmabook.png" alt="Karma Book">
+    </a>
+
+    <a href="index.html">
+        <img id="chain-connect-logo" class="logo" src="/chainconnectlogo.png" alt="Chain Connect Logo">
+    </a>
+    <img id="infinity-logo" class="logo" src="/infinity.png" alt="Infinity Logo">
+
+    <div id="form-container">
+        <form class="contact-form" action="https://formspree.io/f/mzzbbevr" method="POST">
+            <label>
+                Your email:
+                <input type="email" name="email" required>
+            </label>
+            <label>
+                Your message:
+                <textarea name="message" required></textarea>
+            </label>
+            <button type="submit">Send</button>
+        </form>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    
+    <script>
+        // Star background setup
+        const starCanvas = document.getElementById('star-background');
+        const starCtx = starCanvas.getContext('2d');
+        
+        // Initialize variables
+        let scene, camera, renderer, cube, cubeEdges, controls;
+        let stars = [];
+        const starCount = 287;
+        const maxRadius = 2;
+        const attractionStrength = 0.002;
+        const latticeDistance = 120;
+        const latticeColor = 'rgba(173, 216, 230, 0.3)';
+        const returnSpeed = 0.0067;
+        const pulseVariation = 0.02;
+        const cursorEffectRange = 200;
+        const movementSpeedMultiplier = 1.1;
+        const mouse = { x: undefined, y: undefined, active: false };
+
+        // Three.js setup
+        function initThreeJS() {
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.z = 5;
+
+            renderer = new THREE.WebGLRenderer({ 
+                canvas: document.getElementById('three-canvas'), 
+                alpha: true 
+            });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+
+            const geometry = new THREE.BoxGeometry(1, 1, 1);
+            const material = new THREE.MeshBasicMaterial({ color: 0x000000 });
+            cube = new THREE.Mesh(geometry, material);
+            scene.add(cube);
+
+            const edgesGeometry = new THREE.EdgesGeometry(geometry);
+            const edgesMaterial = new THREE.LineBasicMaterial({ color: 0xffffff });
+            cubeEdges = new THREE.LineSegments(edgesGeometry, edgesMaterial);
+            scene.add(cubeEdges);
+
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+            controls.enableZoom = true;
+            controls.enabled = true;
+            controls.rotateSpeed = 0.5;
+
+            animateThreeJS();
+        }
+
+        function animateThreeJS() {
+            requestAnimationFrame(animateThreeJS);
+
+            if (!controls.enabled || !controls.active) {
+                cube.rotation.x += 0.01;
+                cube.rotation.y += 0.01;
+                cubeEdges.rotation.copy(cube.rotation);
+            }
+
+            controls.update();
+            renderer.render(scene, camera);
+        }
+
+        function initStars() {
+            starCanvas.width = window.innerWidth;
+            starCanvas.height = window.innerHeight;
+            stars = [];
+            for (let i = 0; i < starCount; i++) {
+                let radius = Math.random() * maxRadius;
+                let x = Math.random() * starCanvas.width;
+                let y = Math.random() * starCanvas.height;
+                let originalX = x;
+                let originalY = y;
+                let dx = (Math.random() - 0.5) * 0.2 * movementSpeedMultiplier;
+                let dy = (Math.random() - 0.5) * 0.2 * movementSpeedMultiplier;
+                let pulseRate = Math.random() * pulseVariation + 0.01;
+                let opacity = Math.random();
+                stars.push({ x, y, originalX, originalY, dx, dy, radius, opacity, pulseRate });
+            }
+        }
+
+        function drawStars() {
+            starCtx.clearRect(0, 0, starCanvas.width, starCanvas.height);
+            starCtx.fillStyle = 'rgba(0, 0, 0, 1)';
+            starCtx.fillRect(0, 0, starCanvas.width, starCanvas.height);
+
+            stars.forEach(star => {
+                let alpha = 0.5 + 0.5 * Math.sin(star.opacity);
+                star.opacity += star.pulseRate;
+                starCtx.beginPath();
+                starCtx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+                starCtx.fillStyle = `rgba(173, 216, 230, ${alpha})`;
+                starCtx.fill();
+
+                if (!mouse.active) {
+                    star.x += (star.originalX - star.x) * returnSpeed;
+                    star.y += (star.originalY - star.y) * returnSpeed;
+                } else {
+                    star.x += star.dx;
+                    star.y += star.dy;
+                }
+
+                if (star.x > starCanvas.width) star.x = 0;
+                if (star.x < 0) star.x = starCanvas.width;
+                if (star.y > starCanvas.height) star.y = 0;
+                if (star.y < 0) star.y = starCanvas.height;
+            });
+
+            if (mouse.active) {
+                attractStars();
+                connectStars();
+            }
+
+            requestAnimationFrame(drawStars);
+        }
+
+        function attractStars() {
+            stars.forEach(star => {
+                let distanceToMouse = Math.hypot(mouse.x - star.x, mouse.y - star.y);
+                if (distanceToMouse < cursorEffectRange) {
+                    let attractionX = (mouse.x - star.x) * attractionStrength;
+                    let attractionY = (mouse.y - star.y) * attractionStrength;
+                    star.x += attractionX;
+                    star.y += attractionY;
+                }
+            });
+        }
+
+        function connectStars() {
+            for (let i = 0; i < stars.length; i++) {
+                for (let j = i + 1; j < stars.length; j++) {
+                    let distance = Math.hypot(stars[i].x - stars[j].x, stars[i].y - stars[j].y);
+                    if (distance < latticeDistance && 
+                        Math.hypot(mouse.x - stars[i].x, mouse.y - stars[i].y) < cursorEffectRange) {
+                        starCtx.beginPath();
+                        starCtx.moveTo(stars[i].x, stars[i].y);
+                        starCtx.lineTo(stars[j].x, stars[j].y);
+                        starCtx.strokeStyle = latticeColor;
+                        starCtx.lineWidth = 0.7;
+                        starCtx.stroke();
+                    }
+                }
+            }
+        }
+
+        document.getElementById('infinity-logo').onclick = function(e) {
+            e.preventDefault();
+            const form = document.getElementById('form-container');
+            form.classList.toggle('active');
+        };
+
+        window.addEventListener('mousemove', function(event) {
+            mouse.x = event.x;
+            mouse.y = event.y;
+            mouse.active = true;
+        });
+
+        window.addEventListener('mouseleave', function() {
+            mouse.active = false;
+        });
+
+        window.addEventListener('resize', function() {
+            starCanvas.width = window.innerWidth;
+            starCanvas.height = window.innerHeight;
+            if (camera && renderer) {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            }
+            initStars();
+        });
+
+        // Initialize everything on DOMContentLoaded
+        document.addEventListener('DOMContentLoaded', function() {
+            initStars();
+            drawStars();
+            initThreeJS();
+        });
+    </script>
+</body>
+</html>
